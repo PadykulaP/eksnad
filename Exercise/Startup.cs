@@ -29,6 +29,10 @@ namespace Exercise
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()
+            {
+                Version = "v1"
+            }));
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<INotificationScheduleRepository, NotificationScheduleRepository>();
             services.AddTransient<INotificationRepository, NotificationRepository>();
@@ -48,6 +52,13 @@ namespace Exercise
 
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options => {
+
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "exercise");
+            });
+       
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Exercise.Infrastructure
 {
     public class NotificationRepository: INotificationRepository
     {
-        private List<Company> _companies = new List<Company>
+        private static List<Company> _companies = new List<Company>
         {
             new Company
             {
@@ -48,9 +48,35 @@ namespace Exercise.Infrastructure
                 Market = "Finland"
             }
         };
+        private static Dictionary<string, List<DateTime>> _companiesNotificationCreationAttempts = new Dictionary<string, List<DateTime>>();
         public Company GetCompany(string companyId)
         {
             return _companies.FirstOrDefault(x => x.Id == companyId);
+        }
+
+        public void LogAttempt(Company company)
+        {
+            if(!_companiesNotificationCreationAttempts.ContainsKey(company.Id))
+            {
+                _companiesNotificationCreationAttempts.Add(company.Id, new List<DateTime> { DateTime.UtcNow });
+                return;
+            }
+            _companiesNotificationCreationAttempts[company.Id].Add(DateTime.UtcNow);
+        }
+
+        public void Save(Company company)
+        {
+            Company c = GetCompany(company.Id);
+            if(c is null)
+            {
+                _companies.Add(new Company {
+                    Id = company.Id,
+                    CompanyNumber  = new Random(100).ToString(),
+                    CompanyType = Settings.CompanyType.small,
+                    Market = "Denmark"
+                });
+            }
+            c.NotificationPlan = company.NotificationPlan;
         }
     }
 }

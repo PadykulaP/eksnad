@@ -9,7 +9,7 @@ namespace Exercise.Application.Interfaces
 {
     public interface INotificationService
     {
-        NotificationPlan CreateNotificationSchedule(string country, int size, DateTime callDate);
         Company ProcessNotificationCall(string companyId);
+        Company GetNotification(string companyId);
     }
 }

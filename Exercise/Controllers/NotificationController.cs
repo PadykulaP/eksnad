@@ -28,18 +28,24 @@ namespace Exercise.Controllers
         }
 
         [HttpGet("{companyId}")]
-        public IActionResult Get(string companyId)
+        public async Task<IActionResult> Get(string companyId)
         {
-            Company company = _service.ProcessNotificationCall(companyId);
+            Company company = await Task.Run(()  => _service.GetNotification(companyId));
             if (company is null)
                 return BadRequest($"Company with id:{companyId} does not exist or is not allowed in the system.");
+            if (company.NotificationPlan is null)
+                return BadRequest($"Company with id:{companyId} has not created notification plan yet.");
             var dto = Application.Mappers.MapToDto.MapToNotificationPlan(company);
             return Ok(JsonConvert.SerializeObject(dto));
         }
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post(Request request)
         {
-
+            Company company = await Task.Run(() => _service.ProcessNotificationCall(request.CompanyId));
+            if (company is null)
+                return BadRequest($"Company with id:{request.CompanyId} does not exist or is not allowed in the system.");
+            var dto = Application.Mappers.MapToDto.MapToNotificationPlan(company);
+            return Ok(JsonConvert.SerializeObject(dto));
         }
     }
 }

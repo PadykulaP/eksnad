@@ -9,5 +9,7 @@ namespace Exercise.Infrastructure
     public interface INotificationRepository
     {
         Company GetCompany(string companyId);
+        void Save(Company company);
+        void LogAttempt(Company company);
     }
 }

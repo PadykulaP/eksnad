@@ -32,10 +32,21 @@ namespace Exercise.Application.Services
             {
                 //log error
                 //log in database attempt
+                _notificationRepository.LogAttempt(company);
+                return null;
+            }
+            _notificationRepository.Save(company);
+            return company;
+        }
+        public Company GetNotification(string companyId)
+        {
+            Company company = _notificationRepository.GetCompany(companyId);
+            if (company is null)
+            {
+                //log error etc
                 return null;
             }
             return company;
-
         }
         public NotificationPlan CreateNotificationSchedule(string country, int size, DateTime callDate)
         {
